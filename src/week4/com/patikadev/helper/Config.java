@@ -10,4 +10,6 @@ public class Config {
     public static final String INFO_FILL_MESSAGE = "Lütfen bütün alanları doldurun!";
     public static final String INFO_ERROR_TITLE = "Hata";
     public static final String INFO_RESULT_TITLE = "Sonuç";
+
+    public static final String INFO_CONFIRM_TITLE = "Uyarı";
 }

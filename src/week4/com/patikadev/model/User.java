@@ -37,7 +37,7 @@ public class User {
     public static boolean add(String name, String username, String password, String type) {
         String query = "INSERT INTO \"USER\"(name, username, password, user_type)" +
                 "VALUES (?,?,?,?::user_types);";
-        User findUser = getFetchByUsername(username);
+        User findUser = getFetch(username);
         if (findUser != null) {
             Helper.showErrorMessage("Bu kullanıcı adı daha önceden kulanılmış, başka bir kullanıcı adı giriniz.");
             return false;
@@ -59,7 +59,7 @@ public class User {
 
     public static void update(int id, String name, String username, String password, String type) {
         String query = "UPDATE \"USER\" SET name=?,username=?,password=?,user_type=?::user_types WHERE id=?";
-        User findUser = getFetchByUsername(username);
+        User findUser = getFetch(username);
         if (findUser != null && findUser.getId() != id) {
             Helper.showErrorMessage("Bu kullanıcı adı daha önceden kulanılmış, başka bir kullanıcı adı giriniz.");
         } else {
@@ -86,13 +86,50 @@ public class User {
         }
     }
 
-    public static User getFetchByUsername(String username) {
+    public static User getFetch(String username) {
         User user = null;
         String sql = "SELECT * FROM \"USER\" WHERE USERNAME = ? ;";
 
         try {
             PreparedStatement preparedStatement = DBConnector.getInstance().prepareStatement(sql);
             preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                user = convertResultDataToUser(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return user;
+    }
+
+    public static User getFetch(String username, String password) {
+        User user = null;
+        String sql = "SELECT * FROM \"USER\" WHERE USERNAME = ? AND PASSWORD = ?;";
+
+        try {
+            PreparedStatement preparedStatement = DBConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                user = convertResultDataToUser(resultSet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return user;
+    }
+
+    public static User getFetch(Integer id) {
+        User user = null;
+        String sql = "SELECT * FROM \"USER\" WHERE ID = ? ;";
+
+        try {
+            PreparedStatement preparedStatement = DBConnector.getInstance().prepareStatement(sql);
+            preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 user = convertResultDataToUser(resultSet);
